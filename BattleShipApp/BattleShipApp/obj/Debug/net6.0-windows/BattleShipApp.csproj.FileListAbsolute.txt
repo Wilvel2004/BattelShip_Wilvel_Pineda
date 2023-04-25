@@ -1,0 +1,17 @@
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattleShipApp\BattleShipApp\bin\Debug\net6.0-windows\BattleShipApp.exe
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattleShipApp\BattleShipApp\bin\Debug\net6.0-windows\BattleShipApp.deps.json
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattleShipApp\BattleShipApp\bin\Debug\net6.0-windows\BattleShipApp.runtimeconfig.json
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattleShipApp\BattleShipApp\bin\Debug\net6.0-windows\BattleShipApp.dll
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattleShipApp\BattleShipApp\bin\Debug\net6.0-windows\BattleShipApp.pdb
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShipApp.csproj.AssemblyReference.cache
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShipApp.Form1.resources
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShipApp.csproj.GenerateResource.cache
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShipApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShipApp.AssemblyInfoInputs.cache
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShipApp.AssemblyInfo.cs
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShipApp.csproj.CoreCompileInputs.cache
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShipApp.dll
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\refint\BattleShipApp.dll
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShipApp.pdb
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShipApp.genruntimeconfig.cache
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\ref\BattleShipApp.dll
