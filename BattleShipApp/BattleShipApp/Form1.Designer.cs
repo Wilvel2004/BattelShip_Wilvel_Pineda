@@ -31,6 +31,7 @@
             btnMain1 = new Button();
             txtConsola = new TextBox();
             btnConsola = new Button();
+            btnMain2 = new Button();
             SuspendLayout();
             // 
             // btnMain1
@@ -50,6 +51,7 @@
             txtConsola.Margin = new Padding(3, 4, 3, 4);
             txtConsola.Multiline = true;
             txtConsola.Name = "txtConsola";
+            txtConsola.ScrollBars = ScrollBars.Vertical;
             txtConsola.Size = new Size(777, 540);
             txtConsola.TabIndex = 4;
             // 
@@ -63,11 +65,22 @@
             btnConsola.Text = "Consola";
             btnConsola.UseVisualStyleBackColor = true;
             // 
+            // btnMain2
+            // 
+            btnMain2.Location = new Point(7, 86);
+            btnMain2.Name = "btnMain2";
+            btnMain2.Size = new Size(94, 29);
+            btnMain2.TabIndex = 6;
+            btnMain2.Text = "Main 2";
+            btnMain2.UseVisualStyleBackColor = true;
+            btnMain2.Click += btnMain2_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1084, 680);
+            Controls.Add(btnMain2);
             Controls.Add(btnMain1);
             Controls.Add(txtConsola);
             Controls.Add(btnConsola);
@@ -82,5 +95,6 @@
         private Button btnMain1;
         private TextBox txtConsola;
         private Button btnConsola;
+        private Button btnMain2;
     }
 }
