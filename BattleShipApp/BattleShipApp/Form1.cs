@@ -1,3 +1,4 @@
+using BattleShip.model;
 using BattleShipApp.model;
 using BattleShipApp.utils;
 using System;

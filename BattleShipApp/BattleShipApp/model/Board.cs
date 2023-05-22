@@ -1,18 +1,20 @@
-﻿using System;
+﻿using BattleShipApp.model;
+using BattleShipApp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BattleShipApp.model
+namespace BattleShip.model
 {
     public class Board
     {
-        public static readonly char HIT_SYMBOL = '·';
+        public static readonly char HIT_SYMBOL = '•';
         public static readonly char WATER_SYMBOL = ' ';
         public static readonly char NOTSEEN_SYMBOL = '?';
-        private static readonly int MAX_BOARD_SIZE = 20;
         private static readonly int MIN_BOARD_SIZE = 5;
+        private static readonly int MAX_BOARD_SIZE = 20;
 
         private Dictionary<Coordinate, Ship> board;
         private HashSet<Coordinate> seen;
@@ -20,167 +22,154 @@ namespace BattleShipApp.model
         private int numCrafts;
         private int destroyedCrafts;
 
-        public Board(int size){
+        public Board(int size)
+        {
             numCrafts = 0;
             destroyedCrafts = 0;
+
             board = new Dictionary<Coordinate, Ship>();
             seen = new HashSet<Coordinate>();
 
-            if(size < MIN_BOARD_SIZE || size > MAX_BOARD_SIZE) {
-
-                Form1.console.WriteLine("Size is not in Board size");
-                size = MIN_BOARD_SIZE;
+            if (size < MIN_BOARD_SIZE || size > MAX_BOARD_SIZE)
+            {
+                //Form1.console.WriteLine("Size is not in Board size.");
+                this.size = MIN_BOARD_SIZE;
             }
             else
-            {
                 this.size = size;
-            }
-        
         }
-        public bool AreAllCraftsDestroyed()
+
+        public bool CheckCoordinate(Coordinate c)
         {
-            if(destroyedCrafts == numCrafts)
-            {
+            if (c.Get(0) >= 0 && c.Get(0) < size && c.Get(1) >= 0 && c.Get(1) < size)
                 return true;
-            }
             return false;
         }
-        public bool CheckCoordinate(Coordinate coord)
+
+        public bool AddShip(Ship ship, Coordinate position)
         {
-            if(coord.Get(0) >= 0 && coord.Get(0) < size && coord.Get(1) >= 0 && coord.Get(1) < size)
+            HashSet<Coordinate> coords = ship.GetAbsolutePositions(position);
+
+            // Check if all positions are in the board.
+            foreach (Coordinate c in coords)
+                if (!CheckCoordinate(c))
+                {
+                    //Form1.console.WriteLine($"Coordinate {c} is out of bounds.");
+                    return false;
+                }
+
+            // Check if all coords aren't ocupied.
+            foreach (Coordinate c in coords)
+                if (board.ContainsKey(c))
+                {
+                    //Form1.console.WriteLine($"Coordinate {c} is already ocupied.");
+                    return false;
+                }
+
+            // Check thtat there are not neighbors.
+            HashSet<Coordinate> neighbors = GetNeighborhood(ship, position);
+            foreach (Coordinate c in neighbors)
             {
-                return true;
+                if (GetShip(c) != null)
+                {
+                    //Form1.console.WriteLine($"Coordinate {c} is in a neighbor coordinate.");
+                    return false;
+                }
             }
-            else
+
+            // Adding the ship to the board.
+            ship.SetPosition(position);
+            foreach (Coordinate c in coords)
             {
-                return false;
+                board.Add(c, ship);
             }
+
+            numCrafts++;
+            return true;
         }
 
         public Ship GetShip(Coordinate c)
         {
             if (board.ContainsKey(c))
-            {
                 return board[c];
-            }
             else
-            {
                 return null;
-            }
         }
 
-        public bool isSeen(Coordinate c)
+        public int GetSize()
+        {
+            return this.size;
+        }
+
+        public bool IsSeen(Coordinate c)
         {
             return seen != null && seen.Contains(c);
         }
 
-        public HashSet<Coordinate> GetNeighborHood(Ship ship, Coordinate positions)
-        {
-            HashSet<Coordinate> result = new HashSet<Coordinate>();
-            foreach (Coordinate coor in ship.GetAbsolutePosition(positions)){
-                foreach(Coordinate coorAux in coor.AdjacentCoordinates())
-                    if (CheckCoordinate(coorAux))
-                    {
-                        result.Add(coorAux);
-                    }
-            }
-            foreach(Coordinate coor in ship.GetAbsolutePosition(positions))
-            {
-                result.Remove(coor);
-            }
-            return result;
-        }
-
-        public HashSet<Coordinate> GetNeighborHood(Ship ship)
-        {
-            return GetNeighborHood(ship, ship.GetPosicion());
-        }
-
         public CellStatus Hit(Coordinate c)
         {
-            //Check if c is outside of board
-            if (!CheckCoordinate(c)){
-                Form1.console.WriteLine($"Coordinate {c} is out of bounds");
-                return CellStatus.Water;
+            // Check if coordinate isn't in the board.
+            if (!CheckCoordinate(c))
+            {
+                Form1.console.WriteLine($"Coordinate {c} is out of bounds.");
+                return CellStatus.WATER;
             }
             else
             {
                 seen.Add(c);
 
                 Ship ship = GetShip(c);
-                if( ship == null)
-                {
-                    return CellStatus.Water;
-                }
+                if (ship == null)
+                    return CellStatus.WATER;
                 else
                 {
-                    if (ship.Hit(c)) //it is hitted
+                    if (ship.Hit(c))    // Is hitted
                     {
-                        if (ship.isShotDown())
+                        if (ship.IsShotDown())
                         {
-                            HashSet<Coordinate> neighbors = GetNeighborHood(ship);
-                            foreach (Coordinate coor in neighbors)
+                            HashSet<Coordinate> neighbors = GetNeighborhood(ship);
+                            foreach (Coordinate coord in neighbors)
                             {
-                                seen.Add(coor);
+                                seen.Add(coord);
                             }
 
                             destroyedCrafts++;
-                            return CellStatus.Destroyed;
+                            return CellStatus.DESTROYED;
                         }
                         else
-                        {
-                            return CellStatus.Hit;
-                        }
+                            return CellStatus.HIT;
                     }
-                    else
-                    {
-                        //it's no hitted
-                        return CellStatus.Water;
-                    }
+                    else     // Isn't hitted
+                        return CellStatus.WATER;
                 }
             }
         }
 
-        public bool AddShip(Ship ship,Coordinate position)
+        public bool AreAllCraftsDestroyed()
         {
-            //Check the ship is not out of bounds
-            HashSet<Coordinate> coordinates = ship.GetAbsolutePosition(position);
-            foreach (Coordinate c in coordinates)
-            {
-                if (!CheckCoordinate(c))
-                {
-                    Form1.console.WriteLine($"Coordinate {c} is out of bounds");
-                    return false;
-                }
-            }
-            //Check if all Coordinates are not occupied
-            foreach (Coordinate c in coordinates)
-            {
-                if (board.ContainsKey(c))
-                {
-                    Form1.console.WriteLine($"Coordinate {c} is occupeted by other ship");
-                    return false;
-                }
-            }
-            //Check that there are not neighbors
-            HashSet<Coordinate> neighbors = GetNeighborHood(ship,position);
-            foreach (Coordinate c in neighbors)
-            {
-                if(GetShip(c) != null)
-                {
-                    Form1.console.WriteLine($"Coordinate {c} is in a neghborhood");
-                    return false;
-                }
-            }
-            //Add ship
-            ship.SetPosition(position);
-            foreach(Coordinate c in coordinates)
-            {
-                board.Add(c, ship);
-            }
-            numCrafts++;
-            return true;
+            return numCrafts == destroyedCrafts;
         }
+
+        public HashSet<Coordinate> GetNeighborhood(Ship ship, Coordinate position)
+        {
+            HashSet<Coordinate> coordinates = new HashSet<Coordinate>();
+
+            foreach (Coordinate coord in ship.GetAbsolutePositions(position))
+                foreach (Coordinate coordAux in coord.AdjacentCoordinates())
+                    if (CheckCoordinate(coordAux))
+                        coordinates.Add(coordAux);
+
+            foreach (Coordinate coord in ship.GetAbsolutePositions(position))
+                coordinates.Remove(coord);
+
+            return coordinates;
+        }
+
+        public HashSet<Coordinate> GetNeighborhood(Ship ship)
+        {
+            return GetNeighborhood(ship, ship.GetPosition());
+        }
+
         public string Show(bool unveil)
         {
             string rn = "\r\n";
@@ -188,65 +177,51 @@ namespace BattleShipApp.model
 
             for (int y = 0; y < size; y++)
             {
-                for(int  x = 0; x < size; x++)
+                for (int x = 0; x < size; x++)
                 {
                     Coordinate c = new Coordinate(x, y);
-                    Ship ship = GetShip(c);
                     if (unveil)
                     {
-                        if(ship != null)
+                        Ship ship = GetShip(c);
+                        if (ship != null)
                         {
                             if (ship.IsHit(c))
-                            {
                                 tablero += HIT_SYMBOL;
-                            }
                             else
-                            {
-                                tablero += ship.getSymbol();
-                            }
+                                tablero += ship.GetSymbol();
                         }
                         else
-                        {
                             tablero += WATER_SYMBOL;
-                        }
                     }
                     else
                     {
-                        if (!isSeen(c))
-                        {
+                        if (!IsSeen(c))
                             tablero += NOTSEEN_SYMBOL;
-                        }
                         else
                         {
-                            if(ship == null)
-                            {
+                            Ship ship = GetShip(c);
+                            if (ship == null)
                                 tablero += WATER_SYMBOL;
-                            }
                             else
                             {
-                                if (ship.isShotDown())
-                                {
-                                    tablero += ship.getSymbol();
-                                }
+                                if (ship.IsShotDown())
+                                    tablero += ship.GetSymbol();
                                 else
-                                {
                                     tablero += HIT_SYMBOL;
-                                }
                             }
                         }
                     }
                 }
-                if(y != size - 1)
-                {
+                if (y != size - 1)
                     tablero += rn;
-                }
             }
 
             return tablero;
         }
+
         public override string ToString()
         {
-            return $"Board {size}; Crafts {numCrafts}; Destroyed {destroyedCrafts}";
+            return $"Board {size}; crafts: {numCrafts}; destroyed: {destroyedCrafts}";
         }
     }
 }

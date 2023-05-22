@@ -8,8 +8,8 @@ namespace BattleShipApp.model
 {
     public enum CellStatus
     {
-        Water,
-        Hit,
-        Destroyed
+        WATER,
+        HIT,
+        DESTROYED
     }
 }

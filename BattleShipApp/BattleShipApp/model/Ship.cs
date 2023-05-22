@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BattleShip.model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -68,28 +69,29 @@ namespace BattleShipApp.model
             }
         }
 
-        public void SetPosition(Coordinate pos)
+        public void SetPosition(Coordinate position)
         {
             this.position = position.Copy();
         }
 
-        public Coordinate getPosition() { return position; }
+        public Coordinate GetPosition() { return position; }
 
-        public string getName() { return name; }
+        public string GetName() { return name; }
 
-        public Orientation getOrientation() { return orientation; }
+        public Orientation GetOrientation() { return orientation; }
 
-        public char getSymbol() { return  symbol; }
+        public char GetSymbol() { return  symbol; }
 
-        public int[][] getShape() { return shape; }
+        public int[][] GetShape() { return shape; }
 
         public int GetShapeIndex(Coordinate pos)
         {
             return pos.Get(1) * BOUNDING_SQUARE_SIZE + pos.Get(0);
         }
-        public HashSet<Coordinate> GetAbsolutePosition(Coordinate c)
+        public HashSet<Coordinate> GetAbsolutePositions(Coordinate c)
         {
             HashSet<Coordinate> result = new HashSet<Coordinate>();
+            if(c is null) return result;
             for(int row = 0;row < BOUNDING_SQUARE_SIZE;row++)
             {
                 int fila = BOUNDING_SQUARE_SIZE*row;
@@ -97,22 +99,22 @@ namespace BattleShipApp.model
                 {
                     if (shape[(int)orientation][col + fila] != 0)
                     {
-                        //Coordinate coor = new Coordinate(row,col);
-                        result.Add(c.Add(new Coordinate(col,fila)));
+                        //result.Add(c.Add(new Coordinate(col,fila)));
+                        result.Add(c.Add(new Coordinate(col, row)));
                     }
                 }
             }
             return result;
         }
 
-        public HashSet<Coordinate> GetAbsolutePosition()
+        public HashSet<Coordinate> GetAbsolutePositions()
         {
-            return GetAbsolutePosition(this.GetPosicion());
+            return GetAbsolutePositions(this.GetPosicion());
         }
 
         public bool Hit(Coordinate c)
         {
-            HashSet<Coordinate> coordinates = GetAbsolutePosition();
+            HashSet<Coordinate> coordinates = GetAbsolutePositions();
 
             if (coordinates.Contains(c))
             {
@@ -132,7 +134,7 @@ namespace BattleShipApp.model
         }
         public bool IsHit(Coordinate c)
         {
-            HashSet<Coordinate> coordinates = GetAbsolutePosition();
+            HashSet<Coordinate> coordinates = GetAbsolutePositions();
 
             if (coordinates.Contains(c))
             {
@@ -146,9 +148,10 @@ namespace BattleShipApp.model
             }
             return false;
         }
-        public bool isShotDown()
+        public bool IsShotDown()
         {
-            foreach(Coordinate c in GetAbsolutePosition())
+            if(GetPosicion() is null) return false;
+            foreach(Coordinate c in GetAbsolutePositions())
             {
                 if(!IsHit(c)) return false;
 
@@ -158,7 +161,7 @@ namespace BattleShipApp.model
         public override string ToString()
         {
             string rn = "\r\n";
-            string chart = $"{name} {orientation}{rn}";
+            string chart = $"{name} ({orientation}){rn}";
             chart += $" -----{rn}";
 
             for(int row = 0;row <BOUNDING_SQUARE_SIZE;row++)
