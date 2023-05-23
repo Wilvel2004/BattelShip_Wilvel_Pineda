@@ -1,4 +1,5 @@
 ﻿using BattleShipApp.model;
+using BattleShipApp.model.ship;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NuGet.Frameworks;
 using System;
@@ -24,7 +25,7 @@ namespace BattleShipTest.model
             // creating coordinates (0,0), (0,-70), (-70,-2), (-2,20)
             for (int i = 0; i < DIM - 1; i++)
             {
-                lcoor.Add(new Coordinate(vcoor[i], vcoor[i + 1]));
+                lcoor.Add(new Coordinate2D(vcoor[i], vcoor[i + 1]));
             }
         }
 
@@ -54,16 +55,16 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Coordinate_TestAdjacentCoordinates()
         {
-            Coordinate c = new Coordinate(-3, 5);
+            Coordinate c = new Coordinate2D(-3, 5);
             HashSet<Coordinate> setcoord = c.AdjacentCoordinates();
             for (int i = -1; i < 2; i++)
             {
                 for (int j = -1; j < 2; j++)
                 {
                     if (i == 0 && j == 0)
-                        Assert.IsFalse(setcoord.Contains(new Coordinate(c.Get(0) + i, c.Get(1) + j)));
+                        Assert.IsFalse(setcoord.Contains(new Coordinate2D(c.Get(0) + i, c.Get(1) + j)));
                     else
-                        Assert.IsTrue(setcoord.Contains(new Coordinate(c.Get(0) + i, c.Get(1) + j)));
+                        Assert.IsTrue(setcoord.Contains(new Coordinate2D(c.Get(0) + i, c.Get(1) + j)));
                 }
             }
         }

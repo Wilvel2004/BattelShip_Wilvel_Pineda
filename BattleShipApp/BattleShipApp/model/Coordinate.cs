@@ -75,7 +75,6 @@ namespace BattleShipApp.model
             }
             else
             {
-                return -1;
                 throw new ArgumentException($"Component {(component == 0 ? 'x' : component == 1 ? 'y' : 'z')} is out of bounds");
             }
         }

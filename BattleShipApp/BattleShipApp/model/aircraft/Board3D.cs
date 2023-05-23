@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BattleShipApp.model.exceptions;
+using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace BattleShipApp.model.aircraft
         {
             if (c is Coordinate3D)
             {
-                if (c.Get(0) >= 0 && c.Get(0) < size && c.Get(1) >= 0 && c.Get(1) < size)
+                if (c.Get(0) >= 0 && c.Get(0) < size && c.Get(1) >= 0 && c.Get(1) < size && c.Get(2) >= 0 && c.Get(2) < size)
                     return true;
             }
             else

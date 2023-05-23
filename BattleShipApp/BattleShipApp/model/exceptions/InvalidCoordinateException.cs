@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BattleShipApp.model.exceptions
 {
-    public class InvalidCoordinateException : BattleShipException
+    public class InvalidCoordinateException : BattleshipException
     {
         public InvalidCoordinateException(Coordinate c) : base(c)
         {

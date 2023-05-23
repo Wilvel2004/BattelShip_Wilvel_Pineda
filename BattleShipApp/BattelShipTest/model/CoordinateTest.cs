@@ -1,200 +1,194 @@
-using BattleShipApp.model;
+﻿using BattleShipApp.model;
+using BattleShipApp.model.aircraft;
+using BattleShipApp.model.ship;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace BattleShip0Test
+namespace BattleShipTest.model
 {
     [TestClass]
     public class CoordinateTest
     {
-        readonly List<int[]> vcoordinates = new();
-        static readonly int[] vcoor = { 0, 0, -70, -2, 20 };
-        readonly int DIM = vcoor.Length;
-        List<Coordinate> lcoor;
+        Coordinate cd2, cd3;
 
-        /* initializing mock lists and arrays for checking test results */
         [TestInitialize]
-        public void SetUp() 
+        public void SetUp()
         {
-            lcoor = new List<Coordinate>();
-            // creating coordinates (0,0), (0,-70), (-70,-2), (-2,20)
-            for (int i = 0; i < DIM - 1; i++) 
-            { 
-                lcoor.Add(new Coordinate(vcoor[i], vcoor[i+1]));
-            }
+            cd2 = new Coordinate2D(-10, 7);
+            cd3 = new Coordinate3D(15, 8, -2);
         }
 
-        /* if 2 Coordinates are equals, their hash must be the same,
-         * if the coordinares are distinct, their hash could be the same or not
-         */
+        /* checking Set and Get with coordinates 2D and 3D from SetUp() */
         [TestMethod]
-        public void Coordinate_TestHashCode()
+        public void Coordinate_TestSetGet()
         {
-            Coordinate c1 = lcoor[2];
-            Coordinate c2 = new(c1);
+            Assert.AreEqual(-10, cd2.Get(0));
+            Assert.AreEqual(7, cd2.Get(1));
+            cd2.Set(0, -15);
+            cd2.Set(1, 19);
+            Assert.AreEqual(-15, cd2.Get(0));
+            Assert.AreEqual(19, cd2.Get(1));
 
-            
-            Assert.AreEqual(c1, c2);
-            Assert.AreEqual(c1.GetHashCode(), c2.GetHashCode());
+            Assert.AreEqual(15, cd3.Get(0));
+            Assert.AreEqual(8, cd3.Get(1));
+            Assert.AreEqual(-2, cd3.Get(2));
+            cd3.Set(0, -15);
+            cd3.Set(1, 19);
+            cd3.Set(2, 18);
+            Assert.AreEqual(-15, cd3.Get(0));
+            Assert.AreEqual(19, cd3.Get(1));
+            Assert.AreEqual(18, cd3.Get(2));
         }
 
-        /* check if the constructor works well, analyzing if the components '0'
-         * '1' of each Coordinate created in the SetUp() method are the correct ones 
+        /* checking Set with a component out of bounds in a Coordinate 2D
+         * in this case a ArgumentExcepction must be thrown
          */
         [TestMethod]
-        public void Coordinate_TestCoordinateConstructor()
+        public void Coordinate_TestSetArgumentException2D()
         {
-            int j = 0;
-            for (int i = 0; i < DIM -1; i++)
+            try
             {
-                Assert.AreEqual(vcoor[i], lcoor[j].Get(0), "x");
-                Assert.AreEqual(vcoor[i + 1], lcoor[j].Get(1), "y");
-                j++;
+                cd2.Set(-1, 12);
+                Assert.Fail("Error: ArgumentException has not been thrown");
             }
-        }
-
-        /* check if the copy constructor creates a new Coordinate with the
-         * same values as the respective components of the copied Coordinate.
-         * we do it with each Coordinate created in SetUp() method 
-         */
-        [TestMethod]
-        public void Coordinate_TestCoordinateConstructorCopy()
-        {
-            Coordinate ccopy;
-            foreach (Coordinate c in lcoor)
+            catch (ArgumentException)
             {
-                ccopy = new Coordinate(c);
-                Assert.AreEqual(c.Get(0), ccopy.Get(0));
-                Assert.AreEqual(c.Get(1), ccopy.Get(1));
+                Assert.AreEqual(cd2, cd2.Copy());
+                cd2.Set(1, 5);
             }
         }
 
-        /* check that the Get(int) method for each component of a Coordinate
-         * works correctly. The values of the components of the previous
-         * Coordinate are modified with the method Set(int, int) and it is
-         * verified with Get(int) that the values of its components have 
-         * changed to those values. 
+        /* checking Set with a component out of bounds in a Coordinate 3D
+         * in this case a ArgumentExcepction must be thrown
          */
         [TestMethod]
-        public void Coordinate_TestGetSet()
+        public void Coordinate_TestSetArgumentException3D()
         {
-            Coordinate c = lcoor[2];
-            Assert.AreEqual(-70, c.Get(0), "x!=-70");
-            Assert.AreEqual(-2, c.Get(1), "y!=-2");
-            
-            // modify method Set to public or uncomment this assertion
-            /*c.Set(1, -11);
-            c.Set(0, 33);
-            Assert.AreEqual(33, c.Get(0), "x!=33");
-            Assert.AreEqual(-11, c.Get(1), "y!=-11");*/
-        }
-
-        /* The Coordinates created in the setUp() are added and it is 
-         * verified, as they are added, that the values of their 
-         * components are taking the correct values and that the 
-         * Coordinate returned is not the same as the Coordinate 
-         * that invokes the method.
-         */
-        [TestMethod]
-        public void Coordinate_TestAdd()
-        {
-            Coordinate c1 = lcoor[0];
-            Coordinate c2;
-
-            int sumx = c1.Get(0);
-            int sumy = c1.Get(1);
-
-            for (int i = 0; i < DIM - 2 ; i++)
+            try
             {
-                c2 = c1;
-                c1 = c1.Add(lcoor[i + 1]);
-                sumx += vcoor[i + 1];
-                sumy += vcoor[i + 2];
-
-                Assert.AreEqual(sumx, c1.Get(0));
-                Assert.AreEqual(sumy, c1.Get(1));
-                Assert.AreNotSame(c1, c2);
+                cd3.Set(-1, 12);
+                Assert.Fail("Error: ArgumentException has not been thrown");
             }
-        }
-
-        /* The Coordinates created in the setUp() are substracted and 
-         * it is verified, as they are substracted, that the values of their 
-         * components are taking the correct values and that the 
-         * Coordinate returned is not the same as the Coordinate 
-         * that invokes the method.
-         */
-        [TestMethod]
-        public void Coordinate_TestSubstract()
-        {
-            Coordinate c1 = lcoor[0];
-            Coordinate c2;
-
-            int subx = c1.Get(0);
-            int suby = c1.Get(1);
-
-            for (int i = 0; i < DIM - 2; i++)
+            catch (ArgumentException)
             {
-                c2 = c1;
-                c1 = c1.Substract(lcoor[i + 1]);
-                subx -= vcoor[i + 1];
-                suby -= vcoor[i + 2];
-
-                Assert.AreEqual(subx, c1.Get(0));
-                Assert.AreEqual(suby, c1.Get(1));
-                Assert.AreNotSame(c1, c2);
+                Assert.AreEqual(cd3, cd3.Copy());
+                cd3.Set(2, 5);
             }
         }
 
-        /* It is checked, for the toString() method, that the Coordinate 
-         * created in the setUp() have the correct format.
+        /* checking Get with a component out of bounds in a Coordinate 2D
+         * in this case a ArgumentExcepction must be thrown
          */
         [TestMethod]
-        public void Coordinate_TestToString()
+        public void Coordinate_TestGetArgumentException2D()
         {
-            Assert.AreEqual("(0,0)", RemoveSpaces(lcoor[0].ToString()));
-            Assert.AreEqual("(0,-70)", RemoveSpaces(lcoor[1].ToString()));
-            Assert.AreEqual("(-70,-2)", RemoveSpaces(lcoor[2].ToString()));
-            Assert.AreEqual("(-2,20)", RemoveSpaces(lcoor[3].ToString()));
-        }
-
-        /* we take a Coordinate and check all possible conditions under which 
-         * our Equals() method returns true or false
-         */
-        [TestMethod]
-        public void Coordinate_TestEqualsObject()
-        {
-            object obj = new string("(0, 0)");
-            Coordinate c = lcoor[0];
-            Assert.IsFalse(c.Equals(null));
-            Assert.IsFalse(c.Equals(obj));
-            Assert.IsFalse(c.Equals(lcoor[1]));
-            Assert.IsFalse(c.Equals(new Coordinate(24, 0)));
-            Assert.IsTrue(c.Equals(c));
-
-            Coordinate d = new Coordinate(0, 0);
-            Assert.IsTrue(c.Equals(d));
-        }
-
-        /* Auxiliar method */
-        private string RemoveSpaces(string? str)
-        {
-            string[] exp = str.Split(" ");
-            string nstr = new string("");
-            
-            foreach (string s in exp)
+            try
             {
-                if (!s.Equals(" ")) nstr += s;
+                cd2.Get(-1);
+                Assert.Fail("Error: ArgumentException has not been thrown");
             }
-
-            return nstr;
+            catch (ArgumentException)
+            {
+                try
+                {
+                    cd2.Get(2);
+                    Assert.Fail("Error: ArgumentException has not been thrown");
+                }
+                catch (ArgumentException)
+                {
+                    try
+                    {
+                        cd3.Get(3);
+                        Assert.Fail("Error: ArgumentException has not been thrown");
+                    }
+                    catch (ArgumentException)
+                    {
+                        cd3.Get(1);
+                    }
+                }
+            }
         }
 
-        /* Test implement in the classroom as an example */
+        /* adding a Coordinate2D and a Coordinate3D.
+         * the resulting coordinate dimension depends who invoke Add()
+         */
         [TestMethod]
-        public void Coordinate_ConstructorWithTwoValidParams()
+        public void Coordinate_TestAdd2Dand3D()
         {
-            Coordinate c = new(2, 1);
+            Coordinate aux2d = new Coordinate2D(5, 15);
+            Coordinate aux3d = new Coordinate3D(5, 15, -2);
 
-            Assert.AreEqual(c.ToString(), "(2, 1)");
+            Assert.AreEqual(aux2d, cd2.Add(cd3), "c2+c3");
+            Assert.AreEqual(aux3d, cd3.Add(cd2), "c3+c2");
+            Assert.AreNotEqual(aux2d, cd2, "aux2d!=cd2");
+            Assert.AreNotEqual(aux3d, cd3, "aux3d!=cd3");
+        }
+
+        /* passing null as a parameter to Add(-), it s checking that
+         * ArgumentNullException is thrown in Coordinates 2D and 3D
+         */
+        [TestMethod]
+        public void Coordinate_TestAddNullParameterException()
+        {
+            try
+            {
+                cd2.Add(null);
+                Assert.Fail("Error: ArgumentException has not been thrown");
+            }
+            catch (ArgumentNullException)
+            {
+                try
+                {
+                    cd3.Add(null);
+                }
+                catch (ArgumentNullException)
+                {
+                    cd3.Add(cd2);
+                }
+            }
+        }
+
+        /* passing null as a parameter to Substract(-), it s checking that
+         * ArgumentNullException is thrown in Coordinates 2D and 3D
+         */
+        [TestMethod]
+        public void Coordinate_TestSubstractNullParameterException()
+        {
+            try
+            {
+                cd2.Substract(null);
+                Assert.Fail("Error: ArgumentException has not been thrown");
+            }
+            catch (ArgumentNullException)
+            {
+                try
+                {
+                    cd3.Substract(null);
+                }
+                catch (ArgumentNullException)
+                {
+                    cd3.Substract(cd2);
+                }
+            }
+        }
+
+        /* substracting a Coordinate2D and a Coordinate3D.
+         * the resulting coordinate dimension depends who invoke Substract()
+         */
+        [TestMethod]
+        public void Coordinate_TestSubstract2Dand3D()
+        {
+            Coordinate aux2d = new Coordinate2D(-25, -1);
+            Coordinate aux3d = new Coordinate3D(25, 1, -2);
+
+            Assert.AreEqual(aux2d, cd2.Substract(cd3), "c2-c3");
+            Assert.AreEqual(aux3d, cd3.Substract(cd2), "c3-c2");
+            Assert.AreNotEqual(aux2d, cd2, "aux2d!=cd2");
+            Assert.AreNotEqual(aux3d, cd3, "aux3d!=cd3");
         }
     }
 }

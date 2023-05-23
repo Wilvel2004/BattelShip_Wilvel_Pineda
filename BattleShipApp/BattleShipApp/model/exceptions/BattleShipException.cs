@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace BattleShipApp.model.exceptions
 {
-    public abstract class BattleShipException : Exception
+    public abstract class BattleshipException : Exception
     {
         protected Coordinate coord;
 
-        public BattleShipException(Coordinate c)
+        public BattleshipException(Coordinate c)
         {
             coord = c;
         }

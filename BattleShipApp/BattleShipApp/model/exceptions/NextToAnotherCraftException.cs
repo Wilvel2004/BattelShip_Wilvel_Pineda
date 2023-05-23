@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BattleShipApp.model.exceptions
 {
-    public class NextToAnotherCraftException : BattleShipException
+    public class NextToAnotherCraftException : BattleshipException
     {
         public NextToAnotherCraftException(Coordinate c) : base(c)
         {

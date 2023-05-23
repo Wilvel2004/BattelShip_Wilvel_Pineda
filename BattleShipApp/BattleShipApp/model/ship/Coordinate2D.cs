@@ -25,7 +25,7 @@ namespace BattleShipApp.model.ship
             for (int i = 0; i < 2; i++)
             {
                 coord += components[i].ToString();
-                if (i < 3 - 1)
+                if (i < 2 - 1)
                 {
                     coord += ", ";
                 }

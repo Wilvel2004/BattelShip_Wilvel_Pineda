@@ -1,5 +1,6 @@
-﻿using BattleShip.model;
-using BattleShipApp.model;
+﻿using BattleShipApp.model;
+using BattleShipApp.model.exceptions;
+using BattleShipApp.model.ship;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 namespace BattleShipTest.model
 {
     [TestClass]
-    public class BoardTest
+    public class BoardTestP2
     {
         static readonly int MAX_BOARD_SIZE = 20;
         static readonly int MIN_BOARD_SIZE = 5;
@@ -28,61 +29,83 @@ namespace BattleShipTest.model
         {
             string rn = "\r\n";
 
-            sboardHide1 = $"?????{rn}?????{rn}?????{rn}?????{rn}?????";
+            sboardHide1 = $"?????{rn}" +
+                          $"?????{rn}" +
+                          $"?????{rn}" +
+                          $"?????{rn}" +
+                          $"?????";
 
-            sboardHide2 = $"A ??•{rn}" +
-                          $"A ?? {rn}" +
-                          $"A  ??{rn}" +
+            sboardHide2 = $"Ø ??•{rn}" +
+                          $"Ø ?? {rn}" +
+                          $"Ø  ??{rn}" +
                           $"   ?•{rn}" +
                           $"?•??•";
 
-            sboardEmpty = $"     {rn}     {rn}     {rn}     {rn}     ";
+            sboardEmpty = $"     {rn}" +
+                          $"     {rn}" +
+                          $"     {rn}" +
+                          $"     {rn}" +
+                          $"     ";
 
-            sboard = $"A FFF{rn}" +
-                     $"A    {rn}" +
-                     $"A   G{rn}" +
-                     $"    G{rn}" +
-                     $"BBB G";
+            sboard = $"Ø ØØØ{rn}" +
+                     $"Ø    {rn}" +
+                     $"Ø   Ø{rn}" +
+                     $"    Ø{rn}" +
+                     $"ØØØ Ø";
 
-            sboardHits1 = $"• FFF{rn}" +
+            sboardHits1 = $"• ØØØ{rn}" +
                           $"•    {rn}" +
-                          $"•   G{rn}" +
-                          $"    G{rn}" +
-                          $"BBB G";
+                          $"•   Ø{rn}" +
+                          $"    Ø{rn}" +
+                          $"ØØØ Ø";
 
-            sboardHits2 = $"• FF•{rn}" +
+            sboardHits2 = $"• ØØ•{rn}" +
                           $"•    {rn}" +
-                          $"•   G{rn}" +
+                          $"•   Ø{rn}" +
                           $"    •{rn}" +
-                          $"BBB •";
+                          $"ØØØ •";
 
-            sboardHits3 = $"• FF•{rn}" +
+            sboardHits3 = $"• ØØ•{rn}" +
                           $"•    {rn}" +
-                          $"•   G{rn}" +
+                          $"•   Ø{rn}" +
                           $"    •{rn}" +
-                          $"B•B •";
+                          $"Ø•Ø •";
 
-            fragata = new Ship(Orientation.WEST, 'F', "Barbanegra");
-            galeon = new Ship(Orientation.SOUTH, 'A', "Francis Drake");
-            bergantin = new Ship(Orientation.EAST, 'B', "Benito Soto");
-            goleta = new Ship(Orientation.NORTH, 'G', "Hook");
-            board = new Board(DIM);
+            fragata = new Cruiser(Orientation.WEST);
+            galeon = new Cruiser(Orientation.SOUTH);
+            bergantin = new Cruiser(Orientation.EAST);
+            goleta = new Cruiser(Orientation.NORTH);
+            board = new Board2D(DIM);
         }
 
         /* The size limits in the constructor are checked */
         [TestMethod]
         public void Board_TestGetSize()
         {
-            Board board = new Board(MIN_BOARD_SIZE - 1);
-            Assert.AreEqual(MIN_BOARD_SIZE, board.GetSize());
+            Board board;
 
-            board = new Board(MAX_BOARD_SIZE + 1);
-            Assert.AreEqual(MIN_BOARD_SIZE, board.GetSize());
+            try
+            {
+                board = new Board2D(MIN_BOARD_SIZE - 1);
+                Assert.Fail("Error: ArgumentException has not been thrown");
+            }
+            catch (ArgumentException)
+            {
+            }
 
-            board = new Board(MIN_BOARD_SIZE + 1);
+            try
+            {
+                board = new Board2D(MAX_BOARD_SIZE + 1);
+                Assert.Fail("Error: ArgumentException has not been thrown");
+            }
+            catch (ArgumentException)
+            {
+            }
+
+            board = new Board2D(MIN_BOARD_SIZE + 1);
             Assert.AreEqual(MIN_BOARD_SIZE + 1, board.GetSize());
 
-            board = new Board(MAX_BOARD_SIZE - 1);
+            board = new Board2D(MAX_BOARD_SIZE - 1);
             Assert.AreEqual(MAX_BOARD_SIZE - 1, board.GetSize());
         }
 
@@ -91,39 +114,39 @@ namespace BattleShipTest.model
         public void Board_TestCheckCoordinate()
         {
             int SIZE = 15;
-            Board board = new Board(SIZE);
+            Board board = new Board2D(SIZE);
 
-            Assert.IsFalse(board.CheckCoordinate(new Coordinate(0, SIZE)));
-            Assert.IsFalse(board.CheckCoordinate(new Coordinate(-1, SIZE - 1)));
-            Assert.IsFalse(board.CheckCoordinate(new Coordinate(-1, SIZE)));
-            Assert.IsFalse(board.CheckCoordinate(new Coordinate(SIZE, 0)));
-            Assert.IsFalse(board.CheckCoordinate(new Coordinate(SIZE - 1, -1)));
-            Assert.IsFalse(board.CheckCoordinate(new Coordinate(SIZE, -1)));
-            Assert.IsTrue(board.CheckCoordinate(new Coordinate(0, SIZE - 1)));
-            Assert.IsTrue(board.CheckCoordinate(new Coordinate(SIZE - 1, 0)));
+            Assert.IsFalse(board.CheckCoordinate(new Coordinate2D(0, SIZE)));
+            Assert.IsFalse(board.CheckCoordinate(new Coordinate2D(-1, SIZE - 1)));
+            Assert.IsFalse(board.CheckCoordinate(new Coordinate2D(-1, SIZE)));
+            Assert.IsFalse(board.CheckCoordinate(new Coordinate2D(SIZE, 0)));
+            Assert.IsFalse(board.CheckCoordinate(new Coordinate2D(SIZE - 1, -1)));
+            Assert.IsFalse(board.CheckCoordinate(new Coordinate2D(SIZE, -1)));
+            Assert.IsTrue(board.CheckCoordinate(new Coordinate2D(0, SIZE - 1)));
+            Assert.IsTrue(board.CheckCoordinate(new Coordinate2D(SIZE - 1, 0)));
         }
 
         /* positioning is correct among ships. It is checked that
-         * ships are positioned in the board
+         * ships are positioned on the board
          */
         [TestMethod]
         public void Board_TestAddShipsOk()
         {
-            Assert.IsTrue(board.AddShip(galeon, new Coordinate(0, 1)));
+            Assert.IsTrue(board.AddCraft(galeon, new Coordinate2D(0, 1)));
             for (int i = 2; i < 5; i++)
-                Assert.IsNotNull(board.GetShip(new Coordinate(2, i)), $"x,y = 2,{i}");
+                Assert.IsNotNull(board.GetCraft(new Coordinate2D(2, i)), $"x,y = 2,{i}");
 
-            Assert.IsTrue(board.AddShip(fragata, new Coordinate(5, 1)));
+            Assert.IsTrue(board.AddCraft(fragata, new Coordinate2D(5, 1)));
             for (int i = 6; i < 9; i++)
-                Assert.IsNotNull(board.GetShip(new Coordinate(i, 3)), $"x,y = {i},3");
+                Assert.IsNotNull(board.GetCraft(new Coordinate2D(i, 3)), $"x,y = {i},3");
 
-            Assert.IsTrue(board.AddShip(goleta, new Coordinate(0, 5)));
+            Assert.IsTrue(board.AddCraft(goleta, new Coordinate2D(0, 5)));
             for (int i = 6; i < 9; i++)
-                Assert.IsNotNull(board.GetShip(new Coordinate(2, i)), $"x,y = 2,{i}");
+                Assert.IsNotNull(board.GetCraft(new Coordinate2D(2, i)), $"x,y = 2,{i}");
 
-            Assert.IsTrue(board.AddShip(bergantin, new Coordinate(4, 3)));
+            Assert.IsTrue(board.AddCraft(bergantin, new Coordinate2D(4, 3)));
             for (int i = 5; i < 8; i++)
-                Assert.IsNotNull(board.GetShip(new Coordinate(i, 5)), $"x,y = {i},5");
+                Assert.IsNotNull(board.GetCraft(new Coordinate2D(i, 5)), $"x,y = {i},5");
         }
 
         /* positioning is correct of ships at limits of board. It is checked
@@ -132,42 +155,70 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Board_TestAddShipsOkLimits()
         {
-            Assert.IsTrue(board.AddShip(galeon, new Coordinate(-2, -1)));
+            Assert.IsTrue(board.AddCraft(galeon, new Coordinate2D(-2, -1)));
             for (int i = 0; i < 3; i++)
-                Assert.IsNotNull(board.GetShip(new Coordinate(0, i)), $"x,y = 0,{i}");
+                Assert.IsNotNull(board.GetCraft(new Coordinate2D(0, i)), $"x,y = 0,{i}");
 
-            Assert.IsTrue(board.AddShip(fragata, new Coordinate(-1, 7)));
+            Assert.IsTrue(board.AddCraft(fragata, new Coordinate2D(-1, 7)));
             for (int i = 0; i < 3; i++)
-                Assert.IsNotNull(board.GetShip(new Coordinate(i, 9)), $"x,y = {i},9");
+                Assert.IsNotNull(board.GetCraft(new Coordinate2D(i, 9)), $"x,y = {i},9");
 
-            Assert.IsTrue(board.AddShip(goleta, new Coordinate(7, 6)));
+            Assert.IsTrue(board.AddCraft(goleta, new Coordinate2D(7, 6)));
             for (int i = 7; i < 10; i++)
-                Assert.IsNotNull(board.GetShip(new Coordinate(9, i)), $"x,y = 9,{i}");
+                Assert.IsNotNull(board.GetCraft(new Coordinate2D(9, i)), $"x,y = 9,{i}");
 
-            Assert.IsTrue(board.AddShip(bergantin, new Coordinate(6, -2)));
+            Assert.IsTrue(board.AddCraft(bergantin, new Coordinate2D(6, -2)));
             for (int i = 7; i < 10; i++)
-                Assert.IsNotNull(board.GetShip(new Coordinate(i, 0)), $"x,y = {i},0");
+                Assert.IsNotNull(board.GetCraft(new Coordinate2D(i, 0)), $"x,y = {i},0");
         }
 
         /* positioning out of board. It is also checked that ship is not added */
         [TestMethod]
         public void Board_TestAddShipsOutOfBoard()
         {
-            Assert.IsFalse(board.AddShip(galeon, new Coordinate(0, 7)));
-            for (int i = 8; i < 11; i++)
-                Assert.IsNull(board.GetShip(new Coordinate(2, i)), $"x,y = 2,{i}");
+            try
+            {
+                board.AddCraft(galeon, new Coordinate2D(0, 7));
+                Assert.Fail("Error: BattleShipException has not been thrown");
+            }
+            catch (BattleshipException)
+            {
+                for (int i = 8; i < 11; i++)
+                    Assert.IsNull(board.GetCraft(new Coordinate2D(2, i)), $"x,y = 2,{i}");
+            }
 
-            Assert.IsFalse(board.AddShip(fragata, new Coordinate(7, 3)));
-            for (int i = 8; i < 11; i++)
-                Assert.IsNull(board.GetShip(new Coordinate(i, 5)), $"x,y = {i},5");
+            try
+            {
+                board.AddCraft(fragata, new Coordinate2D(7, 3));
+                Assert.Fail("Error: BattleShipException has not been thrown");
+            }
+            catch (BattleshipException)
+            {
+                for (int i = 8; i < 11; i++)
+                    Assert.IsNull(board.GetCraft(new Coordinate2D(i, 5)), $"x,y = {i},5");
+            }
 
-            Assert.IsFalse(board.AddShip(goleta, new Coordinate(-2, -2)));
-            for (int i = -1; i < 2; i++)
-                Assert.IsNull(board.GetShip(new Coordinate(0, i)), $"x,y = 0,{i}");
+            try
+            {
+                board.AddCraft(goleta, new Coordinate2D(-2, -2));
+                Assert.Fail("Error: BattleShipException has not been thrown");
+            }
+            catch (BattleshipException)
+            {
+                for (int i = -1; i < 2; i++)
+                    Assert.IsNull(board.GetCraft(new Coordinate2D(0, i)), $"x,y = 0,{i}");
+            }
 
-            Assert.IsFalse(board.AddShip(bergantin, new Coordinate(-2, 7)));
-            for (int i = 8; i < 11; i++)
-                Assert.IsNull(board.GetShip(new Coordinate(i, 0)), $"x,y = {i},0");
+            try
+            {
+                board.AddCraft(bergantin, new Coordinate2D(-2, 7));
+                Assert.Fail("Error: BattleShipException has not been thrown");
+            }
+            catch (BattleshipException)
+            {
+                for (int i = 8; i < 11; i++)
+                    Assert.IsNull(board.GetCraft(new Coordinate2D(i, 0)), $"x,y = {i},0");
+            }
         }
 
         /* ship positioning not correct for proximity with other ship.
@@ -176,10 +227,17 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Board_TestAddShipNextOther()
         {
-            Assert.IsTrue(board.AddShip(galeon, new Coordinate(0, 1)));
-            Assert.IsFalse(board.AddShip(fragata, new Coordinate(2, 0)));
-            for (int i = 3; i < 6; i++)
-                Assert.IsNull(board.GetShip(new Coordinate(i, 2)), $"x,y = {i},2");
+            try
+            {
+                board.AddCraft(galeon, new Coordinate2D(0, 1));
+                board.AddCraft(fragata, new Coordinate2D(2, 0));
+                Assert.Fail("Error: BattleShipException has not been thrown");
+            }
+            catch (BattleshipException)
+            {
+                for (int i = 3; i < 6; i++)
+                    Assert.IsNull(board.GetCraft(new Coordinate2D(i, 2)), $"x,y = {i},2");
+            }
         }
 
         /* ship positioning not correct for overlapping proximity with other ship.
@@ -188,10 +246,17 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Board_TestAddShipOccupied()
         {
-            Assert.IsTrue(board.AddShip(galeon, new Coordinate(0, 1)));
-            Assert.IsFalse(board.AddShip(fragata, new Coordinate(1, 0)));
-            for (int i = 3; i < 5; i++)
-                Assert.IsNull(board.GetShip(new Coordinate(i, 2)), $"x,y = {i},2");
+            try
+            {
+                board.AddCraft(galeon, new Coordinate2D(0, 1));
+                board.AddCraft(fragata, new Coordinate2D(1, 0));
+                Assert.Fail("Error: BattleShipException has not been thrown");
+            }
+            catch (BattleshipException)
+            {
+                for (int i = 3; i < 5; i++)
+                    Assert.IsNull(board.GetCraft(new Coordinate2D(i, 2)), $"x,y = {i},2");
+            }
         }
 
         /* a ship is positioned in a coordinate
@@ -201,14 +266,13 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Board_TestGetShip()
         {
-            Assert.IsTrue(board.AddShip(fragata, new Coordinate(3, 1)));
-
-            Coordinate c = new Coordinate(2, 3);
-            Assert.IsNull(board.GetShip(c));
+            board.AddCraft(fragata, new Coordinate2D(3, 1));
+            Coordinate c = new Coordinate2D(2, 3);
+            Assert.IsNull(board.GetCraft(c));
             for (int i = 4; i < 7; i++)
             {
                 c.Set(0, i);
-                Assert.IsNotNull(board.GetShip(c));
+                Assert.IsNotNull(board.GetCraft(c));
             }
         }
 
@@ -218,12 +282,12 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Board_TestAggregationBoardShip()
         {
-            board.AddShip(fragata, new Coordinate(3, 1));
-            Coordinate c = new Coordinate(0, 3);
+            board.AddCraft(fragata, new Coordinate2D(3, 1));
+            Coordinate c = new Coordinate2D(0, 3);
             for (int i = 4; i < 7; i++)
             {
                 c.Set(0, i);
-                Assert.AreSame(fragata, board.GetShip(c));
+                Assert.AreSame(fragata, board.GetCraft(c));
             }
         }
 
@@ -236,9 +300,9 @@ namespace BattleShipTest.model
             for (int i = 0; i < board.GetSize(); i++)
                 for (int j = 0; j < board.GetSize(); j++)
                 {
-                    Assert.IsFalse(board.IsSeen(new Coordinate(i, j)));
-                    board.Hit(new Coordinate(i, j));
-                    Assert.IsTrue(board.IsSeen(new Coordinate(i, j)));
+                    Assert.IsFalse(board.IsSeen(new Coordinate2D(i, j)));
+                    board.Hit(new Coordinate2D(i, j));
+                    Assert.IsTrue(board.IsSeen(new Coordinate2D(i, j)));
                 }
         }
 
@@ -249,17 +313,17 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Board_TestIsSeen2()
         {
-            board.AddShip(galeon, new Coordinate(0, 1));
+            board.AddCraft(galeon, new Coordinate2D(0, 1));
             for (int i = 2; i < 5; i++)
             {
-                Assert.IsFalse(board.IsSeen(new Coordinate(2, i)), $"x,y = 2,{i}");
-                board.Hit(new Coordinate(2, i));
-                Assert.IsTrue(board.IsSeen(new Coordinate(2, i)), $"x,y = 2,{i}");
+                Assert.IsFalse(board.IsSeen(new Coordinate2D(2, i)), $"x,y = 2,{i}");
+                board.Hit(new Coordinate2D(2, i));
+                Assert.IsTrue(board.IsSeen(new Coordinate2D(2, i)), $"x,y = 2,{i}");
             }
 
             for (int i = 1; i < 4; i++)
                 for (int j = 1; j < 6; j++)
-                    Assert.IsTrue(board.IsSeen(new Coordinate(i, j)), $"x,y = {i},{j}");
+                    Assert.IsTrue(board.IsSeen(new Coordinate2D(i, j)), $"x,y = {i},{j}");
         }
 
         /* a ship is positioned in a board, then it is shooted to the each ships' part
@@ -270,14 +334,14 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Board_TestCompositionBoardCoordinate()
         {
-            board.AddShip(galeon, new Coordinate(0, 1));
+            board.AddCraft(galeon, new Coordinate2D(0, 1));
             List<Coordinate> listHits = new List<Coordinate>(); // for shoots
             Coordinate c;
             
             // shooting the ship
             for (int i = 2; i < 5; i++)
             {
-                c = new Coordinate(2, i);
+                c = new Coordinate2D(2, i);
                 listHits.Add(c);
                 board.Hit(c);
             }
@@ -311,15 +375,15 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Board_TestHit()
         {
-            board.AddShip(galeon, new Coordinate(5, 5));
+            board.AddCraft(galeon, new Coordinate2D(5, 5));
             for (int i = 5; i < board.GetSize(); i++)
                 for (int j = 5; j < board.GetSize(); j++)
                     if (i != 7 || j < 6 || j > 8)
-                        Assert.AreEqual(CellStatus.WATER, board.Hit(new Coordinate(i, j)), $"x,y = {i},{j}");
+                        Assert.AreEqual(CellStatus.WATER, board.Hit(new Coordinate2D(i, j)), $"x,y = {i},{j}");
                     else if (i == 7 && j == 8)
-                        Assert.AreEqual(CellStatus.DESTROYED, board.Hit(new Coordinate(i, j)), $"x,y = {i},{j}");
+                        Assert.AreEqual(CellStatus.DESTROYED, board.Hit(new Coordinate2D(i, j)), $"x,y = {i},{j}");
                     else
-                        Assert.AreEqual(CellStatus.HIT, board.Hit(new Coordinate(i, j)), $"x,y = {i},{j}");
+                        Assert.AreEqual(CellStatus.HIT, board.Hit(new Coordinate2D(i, j)), $"x,y = {i},{j}");
         }
 
         /* It is checked that:
@@ -335,25 +399,25 @@ namespace BattleShipTest.model
         public void Board_TestAreAllCraftsDestroyed()
         {
             Assert.IsTrue(board.AreAllCraftsDestroyed(), "numCrafts=destroyedCrafts=0");
-            board.AddShip(galeon, new Coordinate(0, 1));
+            board.AddCraft(galeon, new Coordinate2D(0, 1));
             Assert.IsFalse(board.AreAllCraftsDestroyed(), "numCrafts=1; destroyedCrafts=0");
-            board.AddShip(fragata, new Coordinate(3, 1));
+            board.AddCraft(fragata, new Coordinate2D(3, 1));
             Assert.IsFalse(board.AreAllCraftsDestroyed(), "numCrafts=2; destroyedCrafts=0");
 
             // destroying ship galeon
             for (int i = 2; i < 5; i++)
             {
-                board.Hit(new Coordinate(2, i));
+                board.Hit(new Coordinate2D(2, i));
                 Assert.IsFalse(board.AreAllCraftsDestroyed());
             }
             for (int i = 4; i < 6; i++)
             {
-                board.Hit(new Coordinate(i, 3));
+                board.Hit(new Coordinate2D(i, 3));
                 Assert.IsFalse(board.AreAllCraftsDestroyed(), "numCrafts=2; destroyedCrafts=1");
             }
-            board.Hit(new Coordinate(6, 3));
+            board.Hit(new Coordinate2D(6, 3));
             Assert.IsTrue(board.AreAllCraftsDestroyed(), "numCrafts=destroyedCrafts=2");
-            board.AddShip(galeon, new Coordinate(0, 5));
+            board.AddCraft(galeon, new Coordinate2D(0, 5));
             Assert.IsFalse(board.AreAllCraftsDestroyed(), "numCrafts=3; destroyedCrafts=2");
         }
 
@@ -367,18 +431,26 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Board_TestGetNeighborhoodShipOutOfBounds()
         {
-            HashSet<Coordinate> neighborhood = board.GetNeighborhood(galeon);
-            // assert neighborhood is empty
-            Assert.IsTrue(!neighborhood.Any());
+            HashSet<Coordinate> neighborhood = new HashSet<Coordinate>();
+            try
+            {
+                neighborhood = board.GetNeighborhood(galeon);
+                Assert.Fail("Error: ArgumentNullException has not been thrown");
+            }
+            catch (ArgumentNullException)
+            {
+                // assert neighborhood is empty
+                Assert.IsTrue(!neighborhood.Any());
 
-            neighborhood = board.GetNeighborhood(galeon, new Coordinate(0, 7));
-            Assert.AreEqual(7, neighborhood.Count);
-            for (int i = 1; i < 4; i++)
-                for (int j = 7; j < 11; j++)
-                    if (j > 9 || (j == 8 || j == 9) && i == 2)
-                        Assert.IsFalse(neighborhood.Contains(new Coordinate(i, j)), $"x,y = {i},{j}");
-                    else
-                        Assert.IsTrue(neighborhood.Contains(new Coordinate(i, j)), $"x,y = {i},{j}");
+                neighborhood = board.GetNeighborhood(galeon, new Coordinate2D(0, 7));
+                Assert.AreEqual(7, neighborhood.Count);
+                for (int i = 1; i < 4; i++)
+                    for (int j = 7; j < 11; j++)
+                        if (j > 9 || (j == 8 || j == 9) && i == 2)
+                            Assert.IsFalse(neighborhood.Contains(new Coordinate2D(i, j)), $"x,y = {i},{j}");
+                        else
+                            Assert.IsTrue(neighborhood.Contains(new Coordinate2D(i, j)), $"x,y = {i},{j}");
+            }
         }
 
         /* GetNeighborhood(Ship) is checked where the Ship and all 
@@ -387,15 +459,15 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Board_TestGetNeighborhoodShipCompletelyIn1()
         {
-            board.AddShip(fragata, new Coordinate(5, 1));
+            board.AddCraft(fragata, new Coordinate2D(5, 1));
             HashSet<Coordinate> neighborhood = board.GetNeighborhood(fragata);
             Assert.AreEqual(12, neighborhood.Count);
             for (int i = 5; i < 10; i++)
                 for (int j = 2; j < 4; j++)
                     if (j == 3 && i >= 6 && i <= 8)
-                        Assert.IsFalse(neighborhood.Contains(new Coordinate(i, j)), $"x,y = {i},{j}");
+                        Assert.IsFalse(neighborhood.Contains(new Coordinate2D(i, j)), $"x,y = {i},{j}");
                     else
-                        Assert.IsTrue(neighborhood.Contains(new Coordinate(i, j)), $"x,y = {i},{j}");
+                        Assert.IsTrue(neighborhood.Contains(new Coordinate2D(i, j)), $"x,y = {i},{j}");
         }
 
         /* a Ship is added to a board boundary. Check that getNeighborhood(Ship) 
@@ -404,15 +476,15 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Board_TestGetNeighborhoodShipCompletelyIn2()
         {
-            board.AddShip(fragata, new Coordinate(6, -2));
+            board.AddCraft(fragata, new Coordinate2D(6, -2));
             HashSet<Coordinate> neighborhood = board.GetNeighborhood(fragata);
             Assert.AreEqual(5, neighborhood.Count);
             for (int i = 6; i < 10; i++)
                 for (int j = -2; j < 2; j++)
                     if ((j == 0 && i >= 7 && i <= 9) || j < 0)
-                        Assert.IsFalse(neighborhood.Contains(new Coordinate(i, j)), $"x,y = {i},{j}");
+                        Assert.IsFalse(neighborhood.Contains(new Coordinate2D(i, j)), $"x,y = {i},{j}");
                     else
-                        Assert.IsTrue(neighborhood.Contains(new Coordinate(i, j)), $"x,y = {i},{j}");
+                        Assert.IsTrue(neighborhood.Contains(new Coordinate2D(i, j)), $"x,y = {i},{j}");
         }
 
         /* It is verified that:
@@ -424,17 +496,17 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Board_TestNeighborhoodShipCompletelyOutOfBounds()
         {
-            HashSet<Coordinate> neighborhood = board.GetNeighborhood(galeon, new Coordinate(0, 10));
+            HashSet<Coordinate> neighborhood = board.GetNeighborhood(galeon, new Coordinate2D(0, 10));
             // assert neighborhood is empty
             Assert.IsTrue(!neighborhood.Any());
 
-            neighborhood = board.GetNeighborhood(galeon, new Coordinate(0, 9));
+            neighborhood = board.GetNeighborhood(galeon, new Coordinate2D(0, 9));
             for (int i = 1; i < 4; i++)
                 for (int j = 9; j < 13; j++)
                     if (j > 9)
-                        Assert.IsFalse(neighborhood.Contains(new Coordinate(i, j)), $"x,y = {i},{j}");
+                        Assert.IsFalse(neighborhood.Contains(new Coordinate2D(i, j)), $"x,y = {i},{j}");
                     else
-                        Assert.IsTrue(neighborhood.Contains(new Coordinate(i, j)), $"x,y = {i},{j}");
+                        Assert.IsTrue(neighborhood.Contains(new Coordinate2D(i, j)), $"x,y = {i},{j}");
         }
 
         /* a board of size 5 is created without Ships. Check that what is returned 
@@ -443,7 +515,7 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Board_TestShowBoardEmpty()
         {
-            board = new Board(5);
+            board = new Board2D(5);
 
             string hideShips = board.Show(false);
             Assert.AreEqual(sboardHide1, hideShips);
@@ -460,12 +532,12 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Board_TestShowBoardWithShips()
         {
-            board = new Board(5);
+            board = new Board2D(5);
 
-            board.AddShip(galeon, new Coordinate(-2, -1));
-            board.AddShip(fragata, new Coordinate(1, -2));
-            board.AddShip(goleta, new Coordinate(2, 1));
-            board.AddShip(bergantin, new Coordinate(-1, 2));
+            board.AddCraft(galeon, new Coordinate2D(-2, -1));
+            board.AddCraft(fragata, new Coordinate2D(1, -2));
+            board.AddCraft(goleta, new Coordinate2D(2, 1));
+            board.AddCraft(bergantin, new Coordinate2D(-1, 2));
 
             string hideShips = board.Show(false);
             Assert.AreEqual(sboardHide1, hideShips);
@@ -486,34 +558,34 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Board_TestShowBoardWithShipsAndHits()
         {
-            board = new Board(5);
+            board = new Board2D(5);
 
-            board.AddShip(galeon, new Coordinate(-2, -1));
-            board.AddShip(fragata, new Coordinate(1, -2));
-            board.AddShip(goleta, new Coordinate(2, 1));
-            board.AddShip(bergantin, new Coordinate(-1, 2));
+            board.AddCraft(galeon, new Coordinate2D(-2, -1));
+            board.AddCraft(fragata, new Coordinate2D(1, -2));
+            board.AddCraft(goleta, new Coordinate2D(2, 1));
+            board.AddCraft(bergantin, new Coordinate2D(-1, 2));
 
             // firing on the galeon, sinking it
-            board.Hit(new Coordinate(0, 0));
-            board.Hit(new Coordinate(0, 1));
-            board.Hit(new Coordinate(0, 2));
+            board.Hit(new Coordinate2D(0, 0));
+            board.Hit(new Coordinate2D(0, 1));
+            board.Hit(new Coordinate2D(0, 2));
             string showShips = board.Show(true);
             Assert.AreEqual(sboardHits1, showShips);
 
             // firing on goleta and fragata without sink them
-            board.Hit(new Coordinate(4, 0));
-            board.Hit(new Coordinate(4, 3));
-            board.Hit(new Coordinate(4, 4));
+            board.Hit(new Coordinate2D(4, 0));
+            board.Hit(new Coordinate2D(4, 3));
+            board.Hit(new Coordinate2D(4, 4));
             showShips = board.Show(true);
             Assert.AreEqual(sboardHits2, showShips);
 
             // firing on the bergantin
-            board.Hit(new Coordinate(1, 4));
+            board.Hit(new Coordinate2D(1, 4));
 
             // firing on the water
-            board.Hit(new Coordinate(2, 2));
-            board.Hit(new Coordinate(2, 3));
-            board.Hit(new Coordinate(4, 1));
+            board.Hit(new Coordinate2D(2, 2));
+            board.Hit(new Coordinate2D(2, 3));
+            board.Hit(new Coordinate2D(4, 1));
 
             showShips = board.Show(true);
             Assert.AreEqual(sboardHits3, showShips);
@@ -528,10 +600,10 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Board_TestToString1()
         {
-            board.AddShip(galeon, new Coordinate(0, 1));
-            board.AddShip(fragata, new Coordinate(5, 1));
-            board.AddShip(goleta, new Coordinate(0, 5));
-            board.AddShip(bergantin, new Coordinate(4, 3));
+            board.AddCraft(galeon, new Coordinate2D(0, 1));
+            board.AddCraft(fragata, new Coordinate2D(5, 1));
+            board.AddCraft(goleta, new Coordinate2D(0, 5));
+            board.AddCraft(bergantin, new Coordinate2D(4, 3));
             Assert.AreEqual("Board 10; crafts: 4; destroyed: 0", board.ToString());
         }
 
@@ -541,27 +613,26 @@ namespace BattleShipTest.model
         [TestMethod]
         public void Board_TestToString2()
         {
-            board.AddShip(galeon, new Coordinate(0, 1));
-            board.AddShip(fragata, new Coordinate(3, 1));
+            board.AddCraft(galeon, new Coordinate2D(0, 1));
+            board.AddCraft(fragata, new Coordinate2D(3, 1));
 
             // destroying ship galeon
             for (int i = 2; i < 5; i++)
             {
-                board.Hit(new Coordinate(2, i));
+                board.Hit(new Coordinate2D(2, i));
             }
             Assert.AreEqual("Board 10; crafts: 2; destroyed: 1", board.ToString());
             
             for (int i = 4; i < 6; i++)
             {
-                board.Hit(new Coordinate(i, 3));
+                board.Hit(new Coordinate2D(i, 3));
                 Assert.AreEqual("Board 10; crafts: 2; destroyed: 1", board.ToString());
             }
 
-            board.Hit(new Coordinate(6, 3));
+            board.Hit(new Coordinate2D(6, 3));
             Assert.AreEqual("Board 10; crafts: 2; destroyed: 2", board.ToString());
-            board.AddShip(galeon, new Coordinate(0, 5));
+            board.AddCraft(galeon, new Coordinate2D(0, 5));
             Assert.AreEqual("Board 10; crafts: 3; destroyed: 2", board.ToString());
         }
-
     }
 }

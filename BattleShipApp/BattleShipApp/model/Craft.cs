@@ -1,6 +1,8 @@
 ﻿using System.CodeDom;
 using BattleShipApp.model.ship;
 using BattleShipApp.model;
+using System.Drawing;
+using BattleShipApp.model.exceptions;
 
 namespace BattleShipApp.model
 {
@@ -74,8 +76,16 @@ namespace BattleShipApp.model
                 {
                     if (shape[(int)orientation][col + fila] != 0)
                     {
-                        Coordinate coor = CoordinateFactory.CreateCoordinate(c.Get(0) + col, c.Get(1) + row);
-                        coordinates.Add(coor);
+                        if(c is Coordinate2D)
+                        {
+                            Coordinate coor = CoordinateFactory.CreateCoordinate(c.Get(0) + col, c.Get(1) + row);
+                            coordinates.Add(coor);
+                        }
+                        else
+                        {
+                            Coordinate coor = CoordinateFactory.CreateCoordinate(c.Get(0) + col, c.Get(1) + row, c.Get(2));
+                            coordinates.Add(coor);
+                        }
                     }
                 }
             }
@@ -132,7 +142,7 @@ namespace BattleShipApp.model
                 Coordinate csubs = c.Substract(position);
 
                 if (shape[(int)orientation][GetShapeIndex(csubs)] == HIT_VALUE)
-                    return false;
+                    throw new CoordinateAlreadyHitException(c);
                 else
                 {
                     shape[(int)orientation][GetShapeIndex(csubs)] = HIT_VALUE;

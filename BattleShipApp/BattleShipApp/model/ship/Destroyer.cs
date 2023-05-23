@@ -8,7 +8,7 @@ namespace BattleShipApp.model.ship
 {
     public class Destroyer : Ship
     {
-        private static readonly char Destroyer_SYMBOL = '⇶';
+        private static readonly char Destroyer_SYMBOL = 'Ω';
         public Destroyer(Orientation o) : base(o, Destroyer_SYMBOL, "Destroyer")
         {
             shape = new int[][]
