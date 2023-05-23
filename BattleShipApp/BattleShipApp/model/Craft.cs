@@ -1,32 +1,29 @@
-﻿using BattleShip.model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.CodeDom;
+using BattleShipApp.model.ship;
+using BattleShipApp.model;
 
 namespace BattleShipApp.model
 {
-    public class Ship
+    public abstract class Craft
     {
         public static readonly int BOUNDING_SQUARE_SIZE = 5;
-        public static readonly int HIT_VALUE = -1;
         public static readonly int CRAFT_VALUE = 1;
+        public static readonly int HIT_VALUE = -1;
 
-        private Orientation orientation;
-        private char symbol;
         private string name;
+        private Orientation orientation;
         private Coordinate position;
-        private int[][] shape;
+        protected int[][] shape;
+        private char symbol;
 
-        public Ship(Orientation orientation, char symbol, string name)
+        public Craft(Orientation orientation, char symbol, string name)
         {
             this.orientation = orientation;
             this.symbol = symbol;
             this.name = name;
 
-            this.shape = new int[][]
-            {
+            /*this.shape = new int[][]
+                {
                 new int[] {
                     0, 0, 0, 0, 0, // NORTH .....
                     0, 0, 1, 0, 0, // ..#..
@@ -55,18 +52,121 @@ namespace BattleShipApp.model
                     0, 0, 0, 0, 0, // .....
                     0, 0, 0, 0, 0 // .....
                 }
-            };
+            };*/
         }
-        public Coordinate GetPosicion()
+
+        public HashSet<Coordinate> GetAbsolutePositions()
         {
-            if(position == null)
+            return GetAbsolutePositions(GetPosition());
+        }
+
+        public HashSet<Coordinate> GetAbsolutePositions(Coordinate c)
+        {
+            HashSet<Coordinate> coordinates = new HashSet<Coordinate>();
+
+            if (c is null)
+                throw new ArgumentNullException();
+
+            for (int row = 0; row < BOUNDING_SQUARE_SIZE; row++)
             {
+                int fila = BOUNDING_SQUARE_SIZE * row;
+                for (int col = 0; col < BOUNDING_SQUARE_SIZE; col++)
+                {
+                    if (shape[(int)orientation][col + fila] != 0)
+                    {
+                        Coordinate coor = CoordinateFactory.CreateCoordinate(c.Get(0) + col, c.Get(1) + row);
+                        coordinates.Add(coor);
+                    }
+                }
+            }
+
+            return coordinates;
+        }
+
+        public String GetName()
+        {
+            return name;
+        }
+
+        public Orientation GetOrientation()
+        {
+            return orientation;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public Coordinate GetPosition()
+        {
+            if (position == null)
                 return null;
-            }
             else
-            {
                 return position.Copy();
+        }
+
+        public int[][] GetShape()
+        {
+            return shape;
+        }
+
+        public int GetShapeIndex(Coordinate c)
+        {
+            if (c is null)
+                throw new ArgumentNullException();
+
+            return c.Get(1) * BOUNDING_SQUARE_SIZE + c.Get(0);
+        }
+
+        public char GetSymbol()
+        {
+            return symbol;
+        }
+
+        public bool Hit(Coordinate c)
+        {
+            HashSet<Coordinate> coordenadas = GetAbsolutePositions();
+
+            if (coordenadas.Contains(c))
+            {
+                Coordinate csubs = c.Substract(position);
+
+                if (shape[(int)orientation][GetShapeIndex(csubs)] == HIT_VALUE)
+                    return false;
+                else
+                {
+                    shape[(int)orientation][GetShapeIndex(csubs)] = HIT_VALUE;
+                    return true;
+                }
             }
+
+            return false;
+        }
+
+        public bool IsHit(Coordinate c)
+        {
+            HashSet<Coordinate> coordenadas = GetAbsolutePositions();
+
+            if (coordenadas.Contains(c))
+            {
+                Coordinate csubs = c.Substract(position);
+
+                if (shape[(int)orientation][GetShapeIndex(csubs)] == HIT_VALUE)
+                    return true;
+            }
+            return false;
+        }
+
+        public bool IsShotDown()
+        {
+            if (GetPosition() is null)
+                return false;
+
+            foreach (Coordinate c in GetAbsolutePositions())
+                if (!IsHit(c))
+                    return false;
+
+            return true;
         }
 
         public void SetPosition(Coordinate position)
@@ -74,117 +174,31 @@ namespace BattleShipApp.model
             this.position = position.Copy();
         }
 
-        public Coordinate GetPosition() { return position; }
-
-        public string GetName() { return name; }
-
-        public Orientation GetOrientation() { return orientation; }
-
-        public char GetSymbol() { return  symbol; }
-
-        public int[][] GetShape() { return shape; }
-
-        public int GetShapeIndex(Coordinate pos)
-        {
-            return pos.Get(1) * BOUNDING_SQUARE_SIZE + pos.Get(0);
-        }
-        public HashSet<Coordinate> GetAbsolutePositions(Coordinate c)
-        {
-            HashSet<Coordinate> result = new HashSet<Coordinate>();
-            if(c is null) return result;
-            for(int row = 0;row < BOUNDING_SQUARE_SIZE;row++)
-            {
-                int fila = BOUNDING_SQUARE_SIZE*row;
-                for(int col = 0;col < BOUNDING_SQUARE_SIZE;col++)
-                {
-                    if (shape[(int)orientation][col + fila] != 0)
-                    {
-                        //result.Add(c.Add(new Coordinate(col,fila)));
-                        result.Add(c.Add(new Coordinate(col, row)));
-                    }
-                }
-            }
-            return result;
-        }
-
-        public HashSet<Coordinate> GetAbsolutePositions()
-        {
-            return GetAbsolutePositions(this.GetPosicion());
-        }
-
-        public bool Hit(Coordinate c)
-        {
-            HashSet<Coordinate> coordinates = GetAbsolutePositions();
-
-            if (coordinates.Contains(c))
-            {
-                Coordinate csubs = c.Substract(position);
-
-                if (shape[(int)orientation][GetShapeIndex(csubs)] == HIT_VALUE)
-                {
-                    return false;
-                }
-                else
-                {
-                    shape[(int)orientation][GetShapeIndex(csubs)] = HIT_VALUE;
-                    return true;
-                }
-            }
-            return false;
-        }
-        public bool IsHit(Coordinate c)
-        {
-            HashSet<Coordinate> coordinates = GetAbsolutePositions();
-
-            if (coordinates.Contains(c))
-            {
-                Coordinate csubs = c.Substract(position);
-
-                if (shape[(int)orientation][GetShapeIndex(csubs)] == HIT_VALUE)
-                {
-                    return true;
-                }
-             
-            }
-            return false;
-        }
-        public bool IsShotDown()
-        {
-            if(GetPosicion() is null) return false;
-            foreach(Coordinate c in GetAbsolutePositions())
-            {
-                if(!IsHit(c)) return false;
-
-            }
-            return true;
-        }
         public override string ToString()
         {
             string rn = "\r\n";
             string chart = $"{name} ({orientation}){rn}";
             chart += $" -----{rn}";
 
-            for(int row = 0;row <BOUNDING_SQUARE_SIZE;row++)
+            for (int row = 0; row < BOUNDING_SQUARE_SIZE; row++)
             {
                 int fila = row * BOUNDING_SQUARE_SIZE;
                 chart += "|";
-                for (int col = 0;col < BOUNDING_SQUARE_SIZE; col++)
+                for (int col = 0; col < BOUNDING_SQUARE_SIZE; col++)
                 {
-                    if (shape[(int)orientation][col + fila] == CRAFT_VALUE)
-                    {
-                        chart+= symbol;
-                    }else if(shape[(int)orientation][col + fila] == HIT_VALUE)
-                    {
-                        chart += Board.HIT_SYMBOL;
-                    }
+                    int posvalue = shape[(int)orientation][col + fila];
+                    if (posvalue == CRAFT_VALUE)
+                        chart += symbol;
+                    else if (posvalue == HIT_VALUE)
+                        chart += Board2D.HIT_SYMBOL;
                     else
-                    {
-                        chart += Board.WATER_SYMBOL;
-                    }
+                        chart += Board2D.WATER_SYMBOL;
                 }
                 chart += $"|{rn}";
             }
-            chart += $" -----";
+
+            chart += " -----";
+
             return chart;
         }
     }
