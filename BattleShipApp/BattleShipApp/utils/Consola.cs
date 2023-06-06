@@ -53,5 +53,10 @@ namespace BattleShipApp.utils
         {
             return output.ToString();
         }
+
+        internal static Consola GetInstance(object txtConsola)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

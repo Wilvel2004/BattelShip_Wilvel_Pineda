@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BattleShipApp.model.exceptions
+namespace BattleShipApp.model.io
 {
-    public abstract class BattleshipException : Exception
+    public interface IVisualiser
     {
-
+        public void Show();
+        public void Close();
     }
 }

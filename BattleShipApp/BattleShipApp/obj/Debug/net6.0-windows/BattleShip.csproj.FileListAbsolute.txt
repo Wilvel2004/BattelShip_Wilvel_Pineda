@@ -1,0 +1,8 @@
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattelShip_Wilvel_Pineda\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShip.csproj.AssemblyReference.cache
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattelShip_Wilvel_Pineda\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShip.Form1.resources
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattelShip_Wilvel_Pineda\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShip.csproj.GenerateResource.cache
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattelShip_Wilvel_Pineda\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShip.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattelShip_Wilvel_Pineda\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShip.AssemblyInfoInputs.cache
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattelShip_Wilvel_Pineda\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShip.AssemblyInfo.cs
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattelShip_Wilvel_Pineda\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShip.csproj.CoreCompileInputs.cache
+C:\Users\wilve\OneDrive\Documentos\1DAM\Desarrollo de entornos\BattelShip_Wilvel_Pineda\BattleShipApp\BattleShipApp\obj\Debug\net6.0-windows\BattleShipApp.Form1.resources

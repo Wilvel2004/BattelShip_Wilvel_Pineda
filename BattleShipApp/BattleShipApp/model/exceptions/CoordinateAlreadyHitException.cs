@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BattleShipApp.model.exceptions
 {
-    public class CoordinateAlreadyHitException : BattleshipException
+    public class CoordinateAlreadyHitException : CoordinateException
     {
         public CoordinateAlreadyHitException(Coordinate c) : base(c)
         {
