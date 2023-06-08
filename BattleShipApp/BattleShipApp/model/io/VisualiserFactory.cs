@@ -13,7 +13,7 @@ namespace BattleShipApp.model.io
     {
         public static IVisualiser CreateVisualiser(string s, Game g)
         {
-            string qualifier = "BattelShipApp.io.visualizer";
+            string qualifier = "BattleShipApp.model.io.Visualiser";
             try
             {
                 Type v = Type.GetType(qualifier + s);

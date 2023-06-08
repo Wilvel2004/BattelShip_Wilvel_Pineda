@@ -13,36 +13,32 @@ namespace BattleShipApp.model
     {
         public static Craft CreateCraft(string type, Orientation orientation)
         {
+            //string qualifier = "BattleShip.model.";
             string qualifier;
 
             if ("Bomber".Equals(type) || "Fighter".Equals(type) || "Transport".Equals(type))
-            {
-                qualifier = "BattleShipApp.model.aircraft";
-            }
-            else if ("Destroyer".Equals(type) || "Cruiser".Equals(type) || "Carrier".Equals(type) || "Battelship".Equals(type))
-            {
-                qualifier = "BattleShipApp.model.ship";
-            }
+                qualifier = "BattleShipApp.model.aircraft.";
+            else if ("Battleship".Equals(type) || "Carrier".Equals(type) || "Cruiser".Equals(type) || "Destroyer".Equals(type))
+                qualifier = "BattleShipApp.model.ship.";
             else
-            {
                 qualifier = "";
-            }
 
             try
             {
                 Type craft = Type.GetType(qualifier + type);
+
                 Type[] types = new Type[1];
                 types[0] = typeof(Orientation);
 
+                //ConstructorInfo constructor = craft.GetConstructor(types);
                 ConstructorInfo constructor = craft.GetConstructor(types);
 
                 return (Craft)craft.InvokeMember(
                     "",
-                    BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.NonPublic,
+                    BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance,
                     null,
                     null,
                     new object[] { orientation }
-
                     );
             }
             catch (ArgumentNullException)
@@ -52,7 +48,11 @@ namespace BattleShipApp.model
             catch (ArgumentException)
             {
                 return null;
-            };
+            }
+            catch (NullReferenceException)
+            {
+                return null;
+            }
         }
     }
 }

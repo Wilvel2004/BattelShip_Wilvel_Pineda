@@ -1,9 +1,6 @@
 ﻿using BattleShipApp.model.exceptions;
 using BattleShipApp.model.exceptions.io;
 using BattleShipApp.model.io;
-using BattleShipApp.model.exceptions.io;
-using BattleShipApp.model.exceptions;
-using BattleShipApp.model.io;
 using BattleShipApp.model;
 using BattleShipApp;
 using System;

@@ -629,7 +629,7 @@ namespace BattleShipApp
             }
         }
 
-        private void btnMain4_Click(object sender, EventArgs e)
+        private void btnBattle4_Click_1(object sender, EventArgs e)
         {
             IPlayer player1 = null;
             IPlayer player2 = null;
@@ -639,6 +639,8 @@ namespace BattleShipApp
 
             try
             {
+                //player1 = new PlayerFile("John", @"..\..\..\files\playerfile-john.txt");
+                //player2 = new PlayerFile("Mary", @"..\..\..\files\playerfile-mary.txt");
                 player1 = new PlayerFile("John", @"..\..\..\files\playerfile-john.txt");
                 player2 = new PlayerFile("Mary", @"..\..\..\files\playerfile-mary.txt");
             }
@@ -826,5 +828,6 @@ namespace BattleShipApp
                 console.WriteLine(e1.GetMessage());
             }
         }
+
     }
 }
